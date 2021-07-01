@@ -1,0 +1,4 @@
+
+cmake*_arm/
+cmake*_link/
+*.user

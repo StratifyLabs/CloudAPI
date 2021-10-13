@@ -31,7 +31,7 @@ Storage::get_object(var::StringView path, const fs::FileObject &destination) {
 
   const StringView minimum = "https://..";
   if (url.length() < minimum.length()) {
-    API_RETURN_VALUE_ASSIGN_ERROR(*this, "", EBADMSG);
+    API_RETURN_VALUE_ASSIGN_ERROR(*this, "mediaLink for object is invalid", EBADMSG);
   }
 
   size_t start_pos = url.find("/", minimum.length());

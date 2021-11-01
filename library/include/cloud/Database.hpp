@@ -8,7 +8,7 @@ namespace cloud {
 class Database : public Cloud::SecureClient {
 public:
   using IsRequestShallow = Cloud::IsRequestShallow;
-  Database(const Cloud & cloud, const var::StringView database_project);
+  Database(const Cloud & cloud, var::StringView database_project);
 
   Database& set_project_id(const var::StringView project){
     interface_set_project_id(project);
@@ -35,7 +35,7 @@ public:
 
   // realtime database operations
   Database &listen(
-    const var::StringView path,
+    var::StringView path,
     const fs::FileObject &destination,
     thread::Mutex *lock_on_receive = nullptr);
 
@@ -46,13 +46,13 @@ private:
 
   var::String get_database_url_path(const var::StringView path) {
     return "/" + path + ".json" +
-           (credentials().get_token().is_empty() == false ?
+           (!credentials().get_token().is_empty() ?
                                                           ("?auth=" + credentials().get_token()) : var::String());
   }
 
   void refresh_http_client_database_headers() {
     http_client().add_header_field("Content-Type", "application/json");
-    if (http_client().is_connected() == false) {
+    if (!http_client().is_connected()) {
       http_client().connect(database_host());
     }
   }

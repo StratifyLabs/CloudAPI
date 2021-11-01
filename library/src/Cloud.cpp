@@ -50,7 +50,7 @@ var::String Cloud::SecureClient::execute_method(
   var::StringView request) {
 
   fs::DataFile response_file(fs::OpenMode::append_write_only());
-  fs::ViewFile request_file = fs::ViewFile(View(request));
+  auto request_file = fs::ViewFile(View(request));
 
   {
     thread::Mutex::Scope m_scope(mutex());
@@ -449,7 +449,7 @@ int CloudMap::export_boolean(
   const var::StringView key,
   const json::JsonObject &value) {
   JsonValue booleanObject;
-  if (value.at(("booleanValue")).to_bool() == true) {
+  if (value.at(("booleanValue")).to_bool()) {
     booleanObject = JsonTrue();
   } else {
     booleanObject = JsonFalse();

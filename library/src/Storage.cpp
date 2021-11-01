@@ -13,7 +13,7 @@ Storage::Storage(const Cloud &cloud, const var::StringView database_project)
 json::JsonObject Storage::get_details(var::StringView path) {
   const auto url = get_storage_path(path);
 
-  if (http_client().is_connected() == false) {
+  if (!http_client().is_connected()) {
     thread::Mutex::Scope m_scope(mutex());
     http_client().connect(storage_host());
   }
@@ -70,12 +70,12 @@ Storage &Storage::create_object(
   {
     thread::Mutex::Scope mg(mutex());
 
-    if (http_client().is_connected() == false) {
+    if (!http_client().is_connected()) {
       http_client().connect(storage_host());
     }
 
     PathString progress_key = "uploading";
-    if (count_description.is_empty() == false) {
+    if (!count_description.is_empty()) {
       progress_key.append("|").append(count_description);
     }
     printer().set_progress_key(progress_key.string_view());

@@ -8,7 +8,7 @@ namespace cloud {
 class Store : public Cloud::SecureClient {
 public:
   using IsExisting = Cloud::IsExisting;
-  Store(const Cloud & cloud, const var::StringView database_project);
+  Store(const Cloud & cloud, var::StringView database_project);
 
   Store& set_project_id(const var::StringView project){
     interface_set_project_id(project);
@@ -16,17 +16,17 @@ public:
   }
 
   // Cloud Firestore operations
-  var::KeyString create_document(
-    const var::StringView path,
+  API_NO_DISCARD var::KeyString create_document(
+    var::StringView path,
     const json::JsonObject &object,
-    const var::StringView id = var::StringView(""));
+    var::StringView id = var::StringView(""));
 
   Store &patch_document(
     var::StringView path,
     const json::JsonObject &object,
     IsExisting is_existing = IsExisting::yes);
 
-  json::JsonObject get_document(var::StringView path);
+  API_NO_DISCARD json::JsonObject get_document(var::StringView path);
 
   Store &remove_document(var::StringView path);
 
@@ -67,13 +67,13 @@ private:
       "Content-Type",
       "application/json");
 
-    if (credentials().get_token().is_empty() == false) {
+    if (!credentials().get_token().is_empty()) {
       http_client().add_header_field(
         "Authorization",
         var::String("Bearer ") + credentials().get_token());
     }
 
-    if (http_client().is_connected() == false) {
+    if (!http_client().is_connected()) {
       http_client().connect(m_document_host);
     }
   }

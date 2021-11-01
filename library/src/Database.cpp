@@ -20,8 +20,8 @@ Database &Database::listen(
 
   struct ListenContext {
     var::String incoming;
-    thread::Mutex *lock_on_receive;
-    const fs::FileObject *file;
+    thread::Mutex *lock_on_receive = nullptr;
+    const fs::FileObject *file = nullptr;
   };
 
   ListenContext listen_context;
@@ -110,7 +110,7 @@ Database::get_value(var::StringView path, IsRequestShallow is_shallow) {
   get_value(path, response, is_shallow);
 
   if (response.size() == 0) {
-    return JsonValue();
+    return {};
   }
 
   return JsonDocument()
@@ -123,7 +123,7 @@ var::KeyString Database::create_object(
   const json::JsonObject &object,
   var::StringView id) {
 
-  const auto url = id.is_empty() == false ? get_database_url_path(path / id)
+  const auto url = !id.is_empty() ? get_database_url_path(path / id)
                                           : get_database_url_path(path);
 
   {

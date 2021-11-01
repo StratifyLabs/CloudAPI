@@ -19,7 +19,7 @@ namespace cloud {
 class CloudMap : public json::JsonObject {
 public:
   // constructs an existing cloud map
-  CloudMap(const json::JsonObject &object) : json::JsonObject(object) {}
+  explicit CloudMap(const json::JsonObject &object) : json::JsonObject(object) {}
 
   // imports regular old JSON to the cloud map
   static CloudMap from_json(const json::JsonObject &input);
@@ -35,48 +35,48 @@ private:
   static int import_value(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key,
+    var::StringView key,
     const json::JsonValue &value);
 
   static int import_string(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key,
+    var::StringView key,
     const json::JsonValue &value);
 
   static int import_integer(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key,
+    var::StringView key,
     const json::JsonValue &value);
 
   static int import_real(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key,
+    var::StringView key,
     const json::JsonValue &value);
 
   static int import_boolean(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key,
+    var::StringView key,
     const json::JsonValue &value);
 
   static int import_null(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key);
+    var::StringView key);
 
   static int import_array(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key,
+    var::StringView key,
     const json::JsonArray &map_array);
 
   static int import_map(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key,
+    var::StringView key,
     const json::JsonObject &map);
 
   static int export_json_recursive(
@@ -86,49 +86,49 @@ private:
   static int export_value(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key,
+    var::StringView key,
     const json::JsonObject &value);
 
   static int export_string(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key,
+    var::StringView key,
     const json::JsonObject &value);
 
   static int export_integer(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key,
+    var::StringView key,
     const json::JsonObject &value);
 
   static int export_real(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key,
+    var::StringView key,
     const json::JsonObject &value);
 
   static int export_boolean(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key,
+    var::StringView key,
     const json::JsonObject &value);
 
   static int export_null(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key,
+    var::StringView key,
     const json::JsonObject &value);
 
   static int export_array(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key,
+    var::StringView key,
     const json::JsonObject &value);
 
   static int export_map(
     json::JsonObject *object,
     json::JsonArray *array,
-    const var::StringView key,
+    var::StringView key,
     const json::JsonObject &value);
 };
 
@@ -139,7 +139,7 @@ public:
 
   class Credentials : public json::JsonObject {
   public:
-    Credentials() {}
+    Credentials() = default;
 
     explicit Credentials(const json::JsonObject &object)
       : json::JsonObject(object) {}
@@ -153,7 +153,7 @@ public:
     JSON_ACCESS_STRING_WITH_KEY(Credentials, sessionTicket, session_ticket);
     JSON_ACCESS_BOOL(Credentials, global);
 
-    chrono::DateTime get_token_timestamp() const {
+    API_NO_DISCARD chrono::DateTime get_token_timestamp() const {
       return chrono::DateTime(get_token_timestamp_number());
     }
 
@@ -206,7 +206,7 @@ public:
     var::String
     execute_get_string(var::StringView url);
 
-    const var::StringView database_project() const {
+    var::StringView database_project() const {
       return m_database_project.string_view();
     }
 
@@ -225,14 +225,14 @@ public:
 
   };
 
-  Cloud(const var::StringView api_key,
+  explicit Cloud(var::StringView api_key,
     u32 lifetime = 0);
 
   // needs a host to connect to
   // needs an authorization token
   // needs a token for each transaction
 
-  bool is_logged_in() const;
+  API_NO_DISCARD bool is_logged_in() const;
 
   Cloud &login(var::StringView email, var::StringView password);
   Cloud &refresh_login();
@@ -244,8 +244,8 @@ private:
   API_ACCESS_COMPOUND(Cloud, var::PathString, api_key);
   API_ACCESS_STRING(Cloud, traffic);
 
-  static const var::StringView identity_host() { return "www.googleapis.com"; }
-  static const var::StringView refresh_login_host() {
+  API_NO_DISCARD static var::StringView identity_host() { return "www.googleapis.com"; }
+  API_NO_DISCARD static var::StringView refresh_login_host() {
     return "securetoken.googleapis.com";
   }
 

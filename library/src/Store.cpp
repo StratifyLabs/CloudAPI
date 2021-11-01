@@ -1,4 +1,3 @@
-#include <fs.hpp>
 #include <inet.hpp>
 #include <json.hpp>
 #include <var.hpp>
@@ -15,7 +14,7 @@ var::KeyString Store::create_document(
   const json::JsonObject &object,
   const var::StringView id) {
   const String path_arguments
-    = path + (id.is_empty() == false ? String("?documentId=") + id : String());
+    = path + (!id.is_empty() ? String("?documentId=") + id : String());
 
   const auto url = get_document_url_path(path_arguments);
   refresh_http_client_document_headers();
@@ -40,7 +39,7 @@ Store &Store::patch_document(
   const String path_arguments
     = path + "?currentDocument.exists="
       + (is_existing == IsExisting::yes ? "true" : "false")
-      + (mask_field_arguments.is_empty() == false ? String("&") + mask_field_arguments : String());
+      + (!mask_field_arguments.is_empty() ? String("&") + mask_field_arguments : String());
 
   String result;
   int count = 0;
@@ -80,7 +79,7 @@ json::JsonObject
 Store::list_documents(var::StringView path, var::StringView mask_options) {
   const auto url
     = get_document_url_path(path)
-      & (mask_options.is_empty() == false ? String() : String("?") + mask_options);
+      & (!mask_options.is_empty() ? String() : String("?") + mask_options);
   refresh_http_client_document_headers();
   return execute_get_json(url).to_object();
 }
@@ -88,14 +87,14 @@ Store::list_documents(var::StringView path, var::StringView mask_options) {
 var::String Store::create_mask_fields() {
   String result;
   for (const auto &field : document_mask_fields()) {
-    if (result.is_empty() == false) {
+    if (!result.is_empty()) {
       result += "&";
     }
     result += var::StringView("mask.fieldPaths=") + field;
   }
 
   for (const auto &field : document_update_mask_fields()) {
-    if (result.is_empty() == false) {
+    if (!result.is_empty()) {
       result += "&";
     }
     result += var::StringView("updateMask.fieldPaths=") + field;

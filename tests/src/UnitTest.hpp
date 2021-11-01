@@ -243,8 +243,8 @@ public:
       {
         JsonObject test_document = store.get_document(String("projects/" + id));
         TEST_ASSERT(test_document.at("float").to_real() == 5.0f);
-        TEST_ASSERT(test_document.at("true").to_bool() == true);
-        TEST_ASSERT(test_document.at("false").to_bool() == false);
+        TEST_ASSERT(test_document.at("true").to_bool());
+        TEST_ASSERT(!test_document.at("false").to_bool());
       }
 
       {
@@ -279,19 +279,18 @@ public:
     Printer::Object po(printer(), "credentials");
     {
 
-      TEST_ASSERT(cloud.is_logged_in() == false);
+      TEST_ASSERT(!cloud.is_logged_in());
       TEST_ASSERT(
         cloud.login("test@stratifylabs.co", "testing-user").is_success());
 
-      TEST_ASSERT(cloud.is_logged_in() == true);
+      TEST_ASSERT(cloud.is_logged_in());
 
       printer().key("uid", cloud.credentials().get_uid());
       TEST_ASSERT(
         cloud.credentials().get_uid() == "7BYQMxwh7JfUk94LlMCFlhFKfll2");
 
       TEST_ASSERT(cloud.refresh_login().is_success());
-
-      TEST_ASSERT(cloud.is_logged_in() == true);
+      TEST_ASSERT(cloud.is_logged_in());
     }
     return true;
   }

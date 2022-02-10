@@ -99,8 +99,11 @@ Cloud &Cloud::login(var::StringView email, var::StringView password) {
 
   SecureClient client(*this, "");
   client.client().connect(identity_host());
+  API_RETURN_VALUE_IF_ERROR(*this);
 
   credentials().clear();
+  API_RETURN_VALUE_IF_ERROR(*this);
+
   JsonObject response_object = client.execute_method(
     Http::Method::post,
     path,
@@ -108,6 +111,8 @@ Cloud &Cloud::login(var::StringView email, var::StringView password) {
       .insert("email", JsonString(String(email).cstring()))
       .insert("password", JsonString(String(password).cstring()))
       .insert("returnSecureToken", JsonTrue()));
+
+  API_RETURN_VALUE_IF_ERROR(*this);
 
   m_traffic = client.traffic();
 

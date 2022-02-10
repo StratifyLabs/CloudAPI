@@ -161,6 +161,14 @@ public:
       return set_token_timestamp_number(t.ctime());
     }
 
+    bool is_expired() const {
+      const auto age = get_token_timestamp().age();
+      if( age.second() > 60 ){
+        return true;
+      }
+      return false;
+    }
+
 
   private:
   };
@@ -225,6 +233,7 @@ public:
 
   };
 
+  Cloud() = default;
   explicit Cloud(var::StringView api_key,
     u32 lifetime = 0);
 

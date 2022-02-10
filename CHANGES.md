@@ -3,6 +3,7 @@
 ## New Features
 
 - Update `CMakeLists.txt` to require setup of SDK in a super-project
+- Add `is_expired()` to `Cloud::Credentials`
 
 ## Bug Fixes
 

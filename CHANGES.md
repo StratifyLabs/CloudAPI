@@ -1,3 +1,13 @@
+# Version 1.2.0
+
+## New Features
+
+- Update cmake to use `CMakeSDK` v2.0
+
+## Bug Fixes
+
+- None
+
 # Version 1.1.0
 
 ## New Features

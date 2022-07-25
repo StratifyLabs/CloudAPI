@@ -8,8 +8,8 @@ printer::NullPrinter CloudObject::m_null_printer;
 printer::Printer *CloudObject::m_default_printer = &m_null_printer;
 
 const char * CloudObject::cloud_service_git_hash(){
-#if defined SOS_GIT_HASH
-	return SOS_GIT_HASH;
+#if defined CMSDK_GIT_HASH
+	return CMSDK_GIT_HASH;
 #else
 	return "unknown";
 #endif

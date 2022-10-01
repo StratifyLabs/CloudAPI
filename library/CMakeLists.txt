@@ -1,5 +1,7 @@
 
-set(LIBRARIES JsonAPI InetAPI FsAPI ChronoAPI ThreadAPI)
+set(LIBRARIES JsonAPI InetAPI ThreadAPI)
 
-api_add_api_library(${PROJECT_NAME} "${LIBRARIES}")
+api2_add_library(
+  NAME ${PROJECT_NAME}
+  DEPENDENCIES JsonAPI InetAPI ThreadAPI)
 

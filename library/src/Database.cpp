@@ -28,51 +28,44 @@ Database &Database::listen(
   listen_context.file = &destination;
   listen_context.lock_on_receive = lock_on_receive;
 
-  LambdaFile response_file
-    = LambdaFile()
-        .set_context(&listen_context)
-        .set_write_callback(
-          [](void *context, int location, const var::View view) -> int {
-            MCU_UNUSED_ARGUMENT(location);
-            auto *listen_context = reinterpret_cast<ListenContext *>(context);
+  auto response_file = LambdaFile().set_write_callback(
+    [&](int location, const var::View view) -> int {
+      MCU_UNUSED_ARGUMENT(location);
 
-            listen_context->incoming
-              += String(View(view).to_const_char(), return_value());
+      auto incoming = String{};
+      incoming += String(View(view).to_const_char(), return_value());
 
-            size_t end = StringView(listen_context->incoming).find("\n\n");
+      size_t end = StringView(incoming).find("\n\n");
 
-            if (end != StringView::npos) {
+      if (end != StringView::npos) {
 
-              StringViewList line_list = listen_context->incoming.split("\n");
+        StringViewList line_list = incoming.split("\n");
 
-              if (line_list.count() > 1) {
-                const auto data_colon_pos = line_list.at(1).find(":");
-                if (data_colon_pos != String::npos) {
-                  StringView json_string
-                    = line_list.at(1).get_substring_at_position(
-                      data_colon_pos + 1);
-                  {
-                    thread::Mutex::Scope m_scope(
-                      listen_context->lock_on_receive);
-                    int result
-                      = listen_context->file->write(json_string).return_value();
+        if (line_list.count() > 1) {
+          const auto data_colon_pos = line_list.at(1).find(":");
+          if (data_colon_pos != String::npos) {
+            StringView json_string
+              = line_list.at(1).get_substring_at_position(data_colon_pos + 1);
+            {
+              thread::Mutex::Scope m_scope(lock_on_receive);
+              int result = destination.write(json_string).return_value();
 
-                    if (result < 0) {
-                      return result;
-                    }
-                  }
-                }
-                listen_context->incoming.clear();
+              if (result < 0) {
+                return result;
               }
             }
+          }
+          incoming.clear();
+        }
+      }
 
-            return view.size();
-          })
-        .move();
+      return view.size();
+    });
 
+  auto response = Http::MethodResponse(std::move(response_file));
   http_client.add_header_field("Accept", "text/event-stream")
     .connect(database_host())
-    .get(url, HttpClient::Get().set_response(&response_file));
+    .get(url, response);
 
   assign_error_from_status();
 
@@ -124,7 +117,7 @@ var::KeyString Database::create_object(
   var::StringView id) {
 
   const auto url = !id.is_empty() ? get_database_url_path(path / id)
-                                          : get_database_url_path(path);
+                                  : get_database_url_path(path);
 
   {
     thread::Mutex::Scope m_scope(mutex());

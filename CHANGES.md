@@ -1,3 +1,13 @@
+# Version 1.4.0 (unreleased)
+
+## New Features
+
+- Use API v1.6
+
+## Bug Fixes
+
+- None
+
 # Version 1.3.0
 
 ## New Features

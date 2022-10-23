@@ -1,9 +1,18 @@
+# Version 1.3.0
+
+## New Features
+
+- Use API v1.6
+
+## Bug Fixes
+
+- None
+
 # Version 1.2.0
 
 ## New Features
 
 - Update cmake to use `CMakeSDK` v2.0 using `cmsdk2_` functions
-- Use API v1.6
 
 ## Bug Fixes
 

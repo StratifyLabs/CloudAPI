@@ -44,12 +44,11 @@ Database &Database::listen(
         if (line_list.count() > 1) {
           const auto data_colon_pos = line_list.at(1).find(":");
           if (data_colon_pos != String::npos) {
-            StringView json_string
+            const auto json_string
               = line_list.at(1).get_substring_at_position(data_colon_pos + 1);
             {
               thread::Mutex::Scope m_scope(lock_on_receive);
-              int result = destination.write(json_string).return_value();
-
+              const auto result = destination.write(json_string).return_value();
               if (result < 0) {
                 return result;
               }
@@ -59,7 +58,7 @@ Database &Database::listen(
         }
       }
 
-      return view.size();
+      return int(view.size());
     });
 
   auto response = Http::MethodResponse(std::move(response_file));
@@ -78,20 +77,14 @@ Database &Database::get_value(
   IsRequestShallow is_shallow) {
 
   const bool is_shallow_bool = (is_shallow == IsRequestShallow::yes);
-  const var::String url = "/" + path + ".json" +
+  const auto url = "/" + path + ".json" +
                           (is_shallow_bool ? String("?shallow=true") : String())
                           + (credentials().get_token().is_empty() == false ? ((is_shallow_bool ? String("&") : String("?")) + "auth=" + credentials().get_token()) : String());
-
-  printf("get url %s\n", url.cstring());
-  {
-    thread::Mutex::Scope m_scope(mutex());
-
+  thread::Mutex::Scope(mutex(), [&]() {
     refresh_http_client_database_headers();
-
     http_client().get(url, HttpClient::Get().set_response(&dest));
     assign_error_from_status();
-  }
-
+  });
   return *this;
 }
 
@@ -115,20 +108,13 @@ var::KeyString Database::create_object(
   var::StringView path,
   const json::JsonObject &object,
   var::StringView id) {
-
   const auto url = !id.is_empty() ? get_database_url_path(path / id)
                                   : get_database_url_path(path);
-
-  {
-    thread::Mutex::Scope m_scope(mutex());
+  thread::Mutex::Scope(mutex(), [&]() {
     refresh_http_client_database_headers();
-  }
-
-  const Http::Method method
-    = id.is_empty() ? Http::Method::post : Http::Method::put;
-
-  JsonValue response = execute_method(method, url, object);
-
+  });
+  const auto method = id.is_empty() ? Http::Method::post : Http::Method::put;
+  const auto response = execute_method(method, url, object);
   return id.is_empty()
            ? KeyString(response.to_object().at("name").to_string_view())
            : KeyString(id);
@@ -136,32 +122,22 @@ var::KeyString Database::create_object(
 
 Database &
 Database::patch_object(var::StringView path, const json::JsonObject &object) {
-
   const auto url = get_database_url_path(path);
-
-  {
-    thread::Mutex::Scope m_scope(mutex());
+  thread::Mutex::Scope(mutex(), [&]() {
     refresh_http_client_database_headers();
-  }
-
+  });
   execute_method(Http::Method::patch, url, object);
-
   return *this;
 }
 
 Database &Database::remove_object(var::StringView path) {
   const auto url = get_database_url_path(path);
-
-  {
-    thread::Mutex::Scope m_scope(mutex());
+  thread::Mutex::Scope(mutex(), [&]() {
     refresh_http_client_database_headers();
-
-    fs::DataFile response_file(fs::OpenMode::append_write_only());
-    http_client().remove(
-      url,
-      HttpClient::Remove().set_response(&response_file));
+    auto response
+      = Http::MethodResponse(fs::NullFile());
+    http_client().remove(url, response);
     assign_error_from_status();
-  }
-
+  });
   return *this;
 }

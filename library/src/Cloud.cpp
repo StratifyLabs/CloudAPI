@@ -85,12 +85,7 @@ json::JsonValue Cloud::SecureClient::execute_method(
 }
 
 json::JsonValue Cloud::SecureClient::execute_get_json(var::StringView path) {
-
   return execute_method(Http::Method::get, path, JsonObject());
-}
-
-var::String Cloud::SecureClient::execute_get_string(var::StringView path) {
-  return execute_method(Http::Method::get, path, StringView());
 }
 
 Cloud &Cloud::login(var::StringView email, var::StringView password) {

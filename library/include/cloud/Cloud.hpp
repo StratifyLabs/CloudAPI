@@ -211,9 +211,6 @@ public:
     json::JsonValue
     execute_get_json(var::StringView url);
 
-    var::String
-    execute_get_string(var::StringView url);
-
     var::StringView database_project() const {
       return m_database_project.string_view();
     }

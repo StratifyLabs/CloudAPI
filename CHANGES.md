@@ -3,10 +3,11 @@
 ## New Features
 
 - Update cmake to use `CMakeSDK` v2.0 using `cmsdk2_` functions
+- Use API v1.6
 
 ## Bug Fixes
 
-- None
+- Minor improvements to testing
 
 # Version 1.1.0
 

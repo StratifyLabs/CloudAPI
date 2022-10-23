@@ -45,9 +45,11 @@ public:
 
     TEST_ASSERT(storage.get_object(path, NullFile()).is_success());
 
-    Array<char, 16> name;
-
-    Random().seed().randomize(name);
+    const auto name = [](){
+      Array<char, 16> result;
+      Random().seed().randomize(result);
+      return result;
+    }();
 
     const PathString contents_path
       = PathString("path/to")
@@ -133,7 +135,7 @@ public:
     Printer::Object po(printer(), "database");
 
     {
-      KeyString id = database.create_object(
+      const auto id = database.create_object(
         "projects",
         JsonObject().insert("name", JsonString("a new object")));
 
@@ -212,13 +214,13 @@ public:
 
       TEST_ASSERT(test_document.at("name").to_string() == "test");
       if (0) {
-        store.get_document(String("projects/badrequest"));
+        api::ignore = store.get_document(String("projects/badrequest"));
         printer().key_bool("error", is_error());
         TEST_ASSERT(is_error());
         API_RESET_ERROR();
 
         // test create existing document
-        store.create_document(
+        api::ignore = store.create_document(
           "projects",
           JsonObject().insert("name", JsonString("test")),
           id);
@@ -226,7 +228,7 @@ public:
         API_RESET_ERROR();
       }
       {
-        JsonObject test_document = store.get_document(String("projects/" + id));
+        auto test_document = store.get_document(String("projects/" + id));
         printer().object("doc", test_document);
         TEST_ASSERT(is_success());
         test_document.insert("float", JsonReal(5.0f));
@@ -241,7 +243,7 @@ public:
       }
 
       {
-        JsonObject test_document = store.get_document(String("projects/" + id));
+        const auto test_document = store.get_document(String("projects/" + id));
         TEST_ASSERT(test_document.at("float").to_real() == 5.0f);
         TEST_ASSERT(test_document.at("true").to_bool());
         TEST_ASSERT(!test_document.at("false").to_bool());
@@ -267,7 +269,7 @@ public:
 
         TEST_ASSERT(id = "namedDocument");
 
-        JsonObject test_document = store.get_document("projects/namedDocument");
+        auto test_document = store.get_document("projects/namedDocument");
 
         TEST_ASSERT(test_document.at("name").to_string() == "named");
       }

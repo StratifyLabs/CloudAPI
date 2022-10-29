@@ -1,3 +1,9 @@
+# Version 1.3.1 (unreleased)
+
+## Bug Fixes
+
+- Enforce minimum versions
+
 # Version 1.3.0
 
 ## New Features

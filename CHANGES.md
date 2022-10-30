@@ -1,8 +1,14 @@
-# Version 1.3.1 (unreleased)
+# Version 1.3.2
 
 ## Bug Fixes
 
 - Enforce minimum versions
+- 
+- # Version 1.3.1
+
+## Bug Fixes
+
+- 1.3.0 was tagged on the wrong branch
 
 # Version 1.3.0
 

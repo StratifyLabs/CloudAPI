@@ -7,8 +7,6 @@ using namespace test;
 #define VERSION "0.1"
 #include <sys/Cli.hpp>
 
-void segfault(int a) { API_ASSERT(false); }
-
 int main(int argc, char *argv[]) {
   sys::Cli cli(argc, argv);
 

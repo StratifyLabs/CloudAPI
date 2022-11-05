@@ -1,17 +1,21 @@
 ﻿
-#include <cstdio>
-
-#include <chrono.hpp>
-#include <crypto.hpp>
-#include <fs.hpp>
-#include <json.hpp>
-#include <printer.hpp>
-#include <thread.hpp>
-#include <var.hpp>
+#include <test/Test.hpp>
+#include <crypto/Random.hpp>
+#include <fs/File.hpp>
+#include <fs/DataFile.hpp>
+#include <fs/ViewFile.hpp>
+#include <json/JsonDocument.hpp>
+#include <thread/Thread.hpp>
 
 #include "cloud.hpp"
 
-#include "test/Test.hpp"
+using namespace var;
+using namespace printer;
+using namespace crypto;
+using namespace fs;
+using namespace json;
+using namespace thread;
+
 
 //"cloudapitest-2ec81"
 

@@ -1,3 +1,9 @@
+# Version 1.3.2 (unreleased)
+
+## Bug Fixes
+
+- Remove extra includes in test
+
 # Version 1.3.2
 
 ## Bug Fixes
